@@ -1,4 +1,3 @@
-// Include guards to your hash_table.h file to prevent multiple inclusions
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 
@@ -14,6 +13,7 @@ typedef struct {
     ht_entry** entries;
     unsigned int entry_count;
     unsigned int size;
+    unsigned int base_size;
 } hash_table;
 
 hash_table* ht_new_table();
