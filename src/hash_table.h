@@ -19,4 +19,9 @@ typedef struct {
 hash_table* ht_new_table();
 void ht_del_table(hash_table* ht);
 
+// api functions
+void ht_insert(hash_table* ht, const char* key, const char* value);
+char* ht_search(hash_table* ht, const char* key);
+void ht_delete(hash_table* ht, const char* key);
+
 #endif

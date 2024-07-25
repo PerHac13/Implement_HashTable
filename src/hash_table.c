@@ -4,6 +4,7 @@
 
 #include "hash_table.h"
 
+
 // creating the entry for the hash table
 static ht_entry* ht_new_entry(const char* key, const char* value) {
     ht_entry* entry = malloc(sizeof(ht_entry));
@@ -58,5 +59,68 @@ static int ht_get_hash(const char* key, const int num_buckets, const int attempt
     const int hash_a = ht_hash(key, 151, num_buckets);
     const int hash_b = ht_hash(key, 163, num_buckets);
     return (hash_a + (attempt * (hash_b + 1))) % num_buckets;
+}
+
+
+// inserting the key and value function
+void ht_insert(hash_table* ht, const char* key, const char* value) {
+    ht_entry* entry = ht_new_entry(key, value);
+    int index = ht_get_hash(entry->key, ht->size, 0);
+    ht_entry* existing_entry = ht->entries[index];
+    int i = 1;
+    while(existing_entry != NULL) {
+        if(existing_entry != &Ht_Del_entry) {
+            if(strcmp(existing_entry->key, key) == 0) {
+                ht_del_entry(existing_entry);
+                ht->entries[index] = entry;
+                return;
+            }
+        }
+        index = ht_get_hash(entry->key, ht->size, i);
+        existing_entry = ht->entries[index];
+        i++;
+    }
+    ht->entries[index] = entry;
+    ht->entry_count++;
+}
+
+// creating a dummy entry to delete the key to avoid breaking of collision chain
+
+static ht_entry Ht_Del_entry = {NULL, NULL};
+
+// searching the key function
+char* ht_search(hash_table* ht, const char* key) {
+    int index = ht_get_hash(key, ht->size, 0);
+    ht_entry* entry = ht->entries[index];
+    int i = 1;
+    while(entry != NULL) {
+        if(entry != &Ht_Del_entry) {
+        if(strcmp(entry->key, key) == 0) {
+            return entry->value;}
+        }
+        index = ht_get_hash(key, ht->size, i);
+        entry = ht->entries[index];
+        i++;
+    }
+    return NULL;
+}
+
+// deleting the key function
+void ht_delete(hash_table* ht, const char* key) {
+    int index = ht_get_hash(key, ht->size, 0);
+    ht_entry* entry = ht->entries[index];
+    int i = 1;
+    while(entry != NULL){
+        if(entry != &Ht_Del_entry) {
+            if(strcmp(entry->key, key) == 0) {
+                ht_del_entry(entry);
+                ht->entries[index] = &Ht_Del_entry;
+            }
+        }
+        index = ht_get_hash(key, ht->size, i);
+        entry = ht->entries[index];
+        i++;
+    }
+    ht->entry_count--;
 }
 
